@@ -1,5 +1,5 @@
-import socket
-import json
+import socket 
+import json 
 
 PORT = 8080
 SERVER = "192.168.1.55" # IP del server 
@@ -17,16 +17,21 @@ def send_msg(msg, client):
     client.close()
     
 
-
-
 def main():
+
+    with open('rpy.JSON') as j:
+        data = json.load(j)
+
+    print("Write pitch")
+    pitch = input()
+    data['pitch'] = pitch
+    msg = json.dumps(data)
     
-    while(True):
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # creo il client
-        client.connect(ADDR) # indirizzo del server a cui devo connettermi 
-        print("Write the msg to send:")
-        msg1 = input()
-        send_msg(msg1, client)
+    
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # creo il client
+    client.connect(ADDR) # indirizzo del server a cui devo connettermi 
+    print("Sanding the jason msg...")
+    send_msg(msg, client)
 
 if __name__ == "__main__":
     main()

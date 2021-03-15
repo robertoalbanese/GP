@@ -10,6 +10,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,7 +43,9 @@ public class MainActivity extends AppCompatActivity {
         String msg;
         TextView msgView = (TextView) findViewById(R.id.msg);
 
-        //TextView msgView = (TextView) findViewById(R.id.msg);
+        JSONObject jObj;
+
+
 
         @Override
         public void run() {
@@ -52,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
                     isr = new InputStreamReader(socket.getInputStream());
                     buffer = new BufferedReader(isr);
                     msg = buffer.readLine();
+                    jObj = new JSONObject( msg);
+                    int pitch = jObj.getInt("pitch");
+                    msg = Integer.toString(pitch);
+
+
                     h.post(new Runnable() {
                         @Override
                         public void run() {
@@ -59,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
-            }catch(IOException e){
+            }catch(IOException | JSONException e){
                 e.printStackTrace();
             }
         }
