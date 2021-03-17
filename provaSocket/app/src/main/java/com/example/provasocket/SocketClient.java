@@ -15,7 +15,6 @@ public class SocketClient extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... voids) {
 
-
         String message = voids[0];
 
         try {

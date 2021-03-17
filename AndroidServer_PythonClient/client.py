@@ -2,7 +2,7 @@ import socket
 import json
 
 PORT = 8080
-SERVER = "192.168.1.55" # IP del server 
+SERVER = "130.251.13.144" # IP del server 
 ADDR = (SERVER, PORT)
 FORMAT = "utf-8"
 DISCONNECT_MESSAGE = "!DISCONNECT" 

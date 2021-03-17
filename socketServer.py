@@ -9,7 +9,7 @@ def sub_server(indirizzo, backlog=1): # blacklog quante richieste può accettare
         s.listen(backlog) # mi metto in ascolto di richieste specificando il backlog, cioè quante ne posso gestire 
         print("server initializated, listening...")
     except socket.error as error:
-        print(f"server crash {error}")
+        #print(f"server crash {error}")
         print("try to rerun the server")
         sub_server(indirizzo, backlog=1)
 
@@ -18,7 +18,7 @@ def sub_server(indirizzo, backlog=1): # blacklog quante richieste può accettare
                                             # funzione che ritorna la connessione (il socket del client) e l'inidrizzo del client 
         richiesta = conn.recv(4096).decode(FORMAT) 
         if richiesta != "":
-            print(f"richiesta: {richiesta} ")
+            #print(f"richiesta: {richiesta} ")
 
 if __name__ == "__main__":
-    sub_server(("192.168.1.74",8080)) #  "" = prende l'IP della macchina su cui sta girando però la porta deve essere specificata  
+    sub_server(("93.38.66.132",29418)) #  "" = prende l'IP della macchina su cui sta girando però la porta deve essere specificata  
