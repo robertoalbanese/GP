@@ -115,5 +115,15 @@
         android:layout_toEndOf="@+id/btn_take_off"
         android:text="Land" />
 
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="72dp"
+        android:layout_height="29dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="-167dp"
+        android:layout_marginBottom="300dp"
+        android:layout_toEndOf="@+id/pitch"
+        android:text="TextView" />
+
 
 </RelativeLayout>

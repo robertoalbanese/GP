@@ -3,7 +3,7 @@ import json
 import time
 
 PORT = 8080
-SERVER = "130.251.13.144"  # IP del server
+SERVER = "130.251.13.122"  # IP del server
 ADDR = (SERVER, PORT)
 FORMAT = "utf-8"
 DISCONNECT_MESSAGE = "!DISCONNECT"
@@ -28,16 +28,16 @@ def main():
     data['pitch'] = i
     msg = json.dumps(data)
     while (True):
+        #print("Write pitch")
+        #pitch = input()
+        data['pitch'] = 5
+        msg = json.dumps(data)
         client = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)  # creo il client
         client.connect(ADDR)  # indirizzo del server a cui devo connettermi
         print("Sanding the jason msg...")
         send_msg(msg, client)
         i = i + 1
-        data['pitch'] = i
-        msg = json.dumps(data)
-        if i == 9:
-            i = 1
         time.sleep(1)
 
 
