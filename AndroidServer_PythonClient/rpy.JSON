@@ -1,5 +1,6 @@
 {
-    "pitch" : 20,
-    "roll" : 12,
-    "yaw" : 10
+    "roll" : 0,
+    "pitch" : 0,
+    "yaw" : 0,
+    "throttle" : 0
 }

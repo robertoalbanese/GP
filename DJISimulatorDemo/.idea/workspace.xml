@@ -34,7 +34,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9e15bb90-bf22-4c16-9b66-788f6484d558" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Android-SimulatorDemo_conStick" beforeDir="false" afterPath="$PROJECT_DIR$/../Android-SimulatorDemo_conStick" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Android-SimulatorDemo_conStick/DJISimulatorDemo/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/../Android-SimulatorDemo_conStick/DJISimulatorDemo/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Android-SimulatorDemo_conStick/DJISimulatorDemo/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Android-SimulatorDemo_conStick/DJISimulatorDemo/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Android-SimulatorDemo_conStick/DJISimulatorDemo/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Android-SimulatorDemo_conStick/DJISimulatorDemo/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Android-SimulatorDemo_conStick/DJISimulatorDemo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Android-SimulatorDemo_conStick/DJISimulatorDemo/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Android-SimulatorDemo_conStick/DJISimulatorDemo/app/src/main/java/com/dji/simulatorDemo/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Android-SimulatorDemo_conStick/DJISimulatorDemo/app/src/main/java/com/dji/simulatorDemo/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AndroidServer_PythonClient/clientJSON.py" beforeDir="false" afterPath="$PROJECT_DIR$/../AndroidServer_PythonClient/clientJSON.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AndroidServer_PythonClient/rpy.JSON" beforeDir="false" afterPath="$PROJECT_DIR$/../AndroidServer_PythonClient/rpy.JSON" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.1.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.1.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.1.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.1.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.1.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.1.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.1.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.1.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.1.1/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.1.1/javaCompile/classAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.1.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.1.1/javaCompile/javaCompile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/dji/simulatorDemo/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/dji/simulatorDemo/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +89,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android-custom-view/home/roberto/Documents/GP/GP/DJISimulatorDemo/app/src/main/java/com/dji/simulatorDemo/OnScreenJoystick.java_SELECTED" value="OnScreenJoystick" />
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Android-SimulatorDemo/DJISimulatorDemo" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="memory.settings.postsync.last.time.stamp" value="1615828799095" />
     <property name="multi-representation-preview/home/roberto/Documents/GP/GP/DJISimulatorDemo/app/src/main/java/com/dji/simulatorDemo/OnScreenJoystick.java_selected" value="Custom views" />
     <property name="not.eligible.for.single.variant.sync" value="true" />
@@ -220,11 +236,11 @@
       <screen x="0" y="21" width="1366" height="747" />
     </state>
     <state x="100" y="96" width="1166" height="572" key="AVDManager/0.21.1366.747@0.21.1366.747" timestamp="1615908522487" />
-    <state x="367" y="122" width="472" height="544" key="FileChooserDialogImpl" timestamp="1615982242967">
+    <state x="367" y="122" width="424" height="479" key="FileChooserDialogImpl" timestamp="1616082317610">
       <screen x="0" y="21" width="1366" height="747" />
     </state>
-    <state x="367" y="122" width="472" height="544" key="FileChooserDialogImpl/0.21.1366.747@0.21.1366.747" timestamp="1615982242967" />
-    <state x="1882" y="146" key="FileChooserDialogImpl/1366.0.1920.1080/0.312.1366.768@1366.0.1920.1080" timestamp="1615976426238" />
+    <state x="367" y="122" width="472" height="544" key="FileChooserDialogImpl/0.21.1366.747@0.21.1366.747" timestamp="1616082317610" />
+    <state x="1882" y="146" width="424" height="479" key="FileChooserDialogImpl/1366.0.1920.1080/0.312.1366.768@1366.0.1920.1080" timestamp="1616063572065" />
     <state width="1324" height="95" key="GridCell.Tab.0.bottom" timestamp="1615993382491">
       <screen x="0" y="21" width="1366" height="747" />
     </state>

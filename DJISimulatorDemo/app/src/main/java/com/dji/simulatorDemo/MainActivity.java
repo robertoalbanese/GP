@@ -392,11 +392,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mConnectStatusTextView = (TextView) findViewById(R.id.ConnectStatusTextView);
 
         // Crea oggetti mSendVirtualStickDataTimer e mSendVirtualStickDataTask per aggiornare i valori delle velocità nella struttura stateData
-        /*if (null == mSendVirtualStickDataTimer) {
+        if (null == mSendVirtualStickDataTimer) {
             mSendVirtualStickDataTask = new SendVirtualStickDataTask();
             mSendVirtualStickDataTimer = new Timer();
             mSendVirtualStickDataTimer.schedule(mSendVirtualStickDataTask, 0, 200);
-        }*/
+        }
 
         // STICK
         mScreenJoystickRight = (OnScreenJoystick) findViewById(R.id.directionJoystickRight);
@@ -459,7 +459,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         // Joystick Dx (setta pitch e roll)
 
-        mScreenJoystickRight.setJoystickListener(new OnScreenJoystickListener() {
+        /*mScreenJoystickRight.setJoystickListener(new OnScreenJoystickListener() {
 
             @Override
             public void onTouch(OnScreenJoystick joystick, float pX, float pY) { // pX e pY arrivano dagli stick
@@ -515,7 +515,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
 
             }
-        });
+        });*/
     }
 
 
@@ -604,19 +604,46 @@ public class MainActivity extends Activity implements View.OnClickListener {
     // mPitch, mRoll, mYaw and mThrottle. E inviarli al mFlightController
     class SendVirtualStickDataTask extends TimerTask {
         Handler h = new Handler();
-        String msg;
-        TextView msgView = (TextView) findViewById(R.id.text2);
+        String msgp;
+        String msgy;
+        String msgr;
+        String msgt;
+        TextView msgViewp = (TextView) findViewById(R.id.pitch);
+        TextView msgViewy = (TextView) findViewById(R.id.yaw);
+        TextView msgViewr = (TextView) findViewById(R.id.roll);
+        TextView msgViewt = (TextView) findViewById(R.id.throttle);
 
         @Override
         public void run() {
 
-            msg = Integer.toString((int) mPitch);
+            msgp = Integer.toString((int) mPitch);
+            msgy = Integer.toString((int) mYaw);
+            msgr = Integer.toString((int) mRoll);
+            msgt = Integer.toString((int) mThrottle);
 
             if (mFlightController != null) {
                 h.post(new Runnable() {
                     @Override
                     public void run() {
-                        msgView.setText(msg);
+                        msgViewp.setText(msgp);
+                    }
+                });
+                h.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        msgViewy.setText(msgy);
+                    }
+                });
+                h.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        msgViewr.setText(msgr);
+                    }
+                });
+                h.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        msgViewt.setText(msgt);
                     }
                 });
                 // metodo che manda le variabili globali (Salvate nell'oggetto FlightControlData) al mFlightController
@@ -662,10 +689,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     msg = buffer.readLine();
                     jObj = new JSONObject(msg);
 
-                    // set pitch
-                    mPitch = (float) jObj.getInt("pitch");
-                    mRoll = (float) jObj.getInt("roll");
+                    // set new data received from socket:
+                    // Apparently pitch and roll assignment are inverted in the tutorial version of the virtual stick control.
+                    // It follows that we have to replicate this inversion by saving the pitch value inside mRoll and viceversa.
+
+                    mRoll = (float) jObj.getInt("pitch");
+                    mPitch = (float) jObj.getInt("roll");
                     mYaw = (float) jObj.getInt("yaw");
+                    mThrottle = (float) jObj.getInt("throttle");
 
                     msg = Integer.toString((int) mPitch);
 

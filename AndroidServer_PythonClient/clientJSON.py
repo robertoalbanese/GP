@@ -3,7 +3,7 @@ import json
 import time
 
 PORT = 8080
-SERVER = "130.251.13.122"  # IP del server
+SERVER = "130.251.13.144"  # IP del server
 ADDR = (SERVER, PORT)
 FORMAT = "utf-8"
 DISCONNECT_MESSAGE = "!DISCONNECT"
@@ -22,22 +22,22 @@ def main():
     with open('rpy.JSON') as j:
         data = json.load(j)
 
-    i = 1
-    #print("Write pitch")
-    #pitch = input()
-    data['pitch'] = i
+    #i = 1
+    print("Write yaw")
+    yaw = input()
+    data['pitch'] = 0
     msg = json.dumps(data)
     while (True):
-        #print("Write pitch")
-        #pitch = input()
-        data['pitch'] = 5
+        #print("Write yaw")
+        #yaw = input()
+        data['pitch'] = yaw
         msg = json.dumps(data)
         client = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)  # creo il client
         client.connect(ADDR)  # indirizzo del server a cui devo connettermi
         print("Sanding the jason msg...")
         send_msg(msg, client)
-        i = i + 1
+        #i = i + 1
         time.sleep(1)
 
 

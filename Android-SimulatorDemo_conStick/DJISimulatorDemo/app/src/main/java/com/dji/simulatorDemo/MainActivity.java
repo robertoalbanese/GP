@@ -582,7 +582,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         @Override
         public void run() {
-            msg = Integer.toString((int) mPitch);
+            msg = Integer.toString((int) mYaw);
             if (mFlightController != null) {
                 if (mFlightController != null) {
                     h.post(new Runnable() {
@@ -632,9 +632,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     jObj = new JSONObject(msg);
 
                     // set pitch
-                    mPitch = (float) jObj.getInt("pitch");
+                    //mPitch = (float) jObj.getInt("pitch");
                     //mRoll = (float) jObj.getInt("roll");
-                    //mYaw = (float) jObj.getInt("yaw");
+                    mYaw = (float) jObj.getInt("yaw");
 
                 }
 
