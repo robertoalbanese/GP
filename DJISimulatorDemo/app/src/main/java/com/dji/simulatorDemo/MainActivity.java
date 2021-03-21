@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.lang.Math;
 
 import dji.common.error.DJISDKError;
 import dji.common.flightcontroller.simulator.InitializationData;
@@ -89,11 +90,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ToggleButton mBtnSimulator;
     private Button mBtnTakeOff;
     private Button mBtnLand;
+    private ToggleButton mSwtcEnableVirtualStick;
 
     private TextView mTextView;
-
-    private OnScreenJoystick mScreenJoystickRight;
-    private OnScreenJoystick mScreenJoystickLeft;
 
     private Timer mSendVirtualStickDataTimer;
     private SendVirtualStickDataTask mSendVirtualStickDataTask;
@@ -383,13 +382,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void initUI() {
 
-        mBtnEnableVirtualStick = (Button) findViewById(R.id.btn_enable_virtual_stick); // abilita virtual stick
-        mBtnDisableVirtualStick = (Button) findViewById(R.id.btn_disable_virtual_stick); // disabilita virtual stick
         mBtnTakeOff = (Button) findViewById(R.id.btn_take_off); // take off
         mBtnLand = (Button) findViewById(R.id.btn_land); // land
         mBtnSimulator = (ToggleButton) findViewById(R.id.btn_start_simulator); // per fare tutto in simulazione
         mTextView = (TextView) findViewById(R.id.textview_simulator); // element to show the simulator state infos
         mConnectStatusTextView = (TextView) findViewById(R.id.ConnectStatusTextView);
+        mSwtcEnableVirtualStick = (ToggleButton) findViewById(R.id.swtc_enable_virtual_stick);
 
         // Crea oggetti mSendVirtualStickDataTimer e mSendVirtualStickDataTask per aggiornare i valori delle velocità nella struttura stateData
         if (null == mSendVirtualStickDataTimer) {
@@ -398,12 +396,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mSendVirtualStickDataTimer.schedule(mSendVirtualStickDataTask, 0, 200);
         }
 
-        // STICK
-        mScreenJoystickRight = (OnScreenJoystick) findViewById(R.id.directionJoystickRight);
-        mScreenJoystickLeft = (OnScreenJoystick) findViewById(R.id.directionJoystickLeft);
-
-        mBtnEnableVirtualStick.setOnClickListener(this);
-        mBtnDisableVirtualStick.setOnClickListener(this);
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
 
@@ -453,110 +445,38 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         });
 
-        /////// OVERRIDE DEL METODO onTouch, che viene chiamato quando tocco gli stick (per i 2 stick)  //////////////
-        // I metodi qui overraidati mettonono i valori degli stick nelle variabili globali mPitch, mRoll, mYaw
-        // and mThrottle.
-
-        // Joystick Dx (setta pitch e roll)
-
-        /*mScreenJoystickRight.setJoystickListener(new OnScreenJoystickListener() {
-
+        //Enable/disable of virtual control mode
+        mSwtcEnableVirtualStick.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onTouch(OnScreenJoystick joystick, float pX, float pY) { // pX e pY arrivano dagli stick
-                // approssimazione/ filtraggio
-                if (Math.abs(pX) < 0.02) {
-                    pX = 0;
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (mFlightController != null) {
+                    mFlightController.setVirtualStickModeEnabled(isChecked, new CommonCallbacks.CompletionCallback() {
+                        @Override
+                        public void onResult(DJIError djiError) {
+                            if (djiError != null) {
+                                showToast(djiError.getDescription());
+                            } else {
+                                if (mSwtcEnableVirtualStick.isChecked()) {
+                                    showToast("VCM Enable Success");
+                                } else {
+                                    showToast("VCM Disable Success");
+                                }
+                            }
+                        }
+                    });
                 }
-
-                if (Math.abs(pY) < 0.02) {
-                    pY = 0;
-                }
-
-                float pitchJoyControlMaxSpeed = 10;
-                float rollJoyControlMaxSpeed = 10;
-
-                // Amplificazione e set delle variabili globali
-                // essendo che gli stick inviano solo dati da -1 a 1 -> servono valori più grandi in velocitò
-                mPitch = (float) (pitchJoyControlMaxSpeed * pX);
-                mRoll = (float) (rollJoyControlMaxSpeed * pY);
-
-                if (null == mSendVirtualStickDataTimer) {
-                    mSendVirtualStickDataTask = new SendVirtualStickDataTask();
-                    mSendVirtualStickDataTimer = new Timer();
-                    mSendVirtualStickDataTimer.schedule(mSendVirtualStickDataTask, 100, 200);
-                }
-
             }
-
         });
-
-        // Joystick Sx (stessa cosa) solo che le variabili da settare sono mYaw and mThrottle
-        mScreenJoystickLeft.setJoystickListener(new OnScreenJoystickListener() {
-
-            @Override
-            public void onTouch(OnScreenJoystick joystick, float pX, float pY) {
-                if (Math.abs(pX) < 0.02) {
-                    pX = 0;
-                }
-
-                if (Math.abs(pY) < 0.02) {
-                    pY = 0;
-                }
-                float verticalJoyControlMaxSpeed = 2;
-                float yawJoyControlMaxSpeed = 30;
-
-                mYaw = (float) (yawJoyControlMaxSpeed * pX);
-                mThrottle = (float) (verticalJoyControlMaxSpeed * pY);
-
-                if (null == mSendVirtualStickDataTimer) {
-                    mSendVirtualStickDataTask = new SendVirtualStickDataTask();
-                    mSendVirtualStickDataTimer = new Timer();
-                    mSendVirtualStickDataTimer.schedule(mSendVirtualStickDataTask, 0, 200);
-                }
-
-            }
-        });*/
     }
 
-
+    /////// OVERRIDE DEL METODO onTouch, che viene chiamato quando tocco gli stick (per i 2 stick)  //////////////
+    // I metodi qui overraidati mettonono i valori degli stick nelle variabili globali mPitch, mRoll, mYaw
+    // and mThrottle.
     // GESTIONE BOTTONI
     @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
-            case R.id.btn_enable_virtual_stick:
-                if (mFlightController != null) {
-
-                    mFlightController.setVirtualStickModeEnabled(true, new CommonCallbacks.CompletionCallback() {
-                        @Override
-                        public void onResult(DJIError djiError) {
-                            if (djiError != null) {
-                                showToast(djiError.getDescription());
-                            } else {
-                                showToast("Enable Virtual Stick Success");
-                            }
-                        }
-                    });
-
-                }
-                break;
-
-            case R.id.btn_disable_virtual_stick:
-
-                if (mFlightController != null) {
-                    mFlightController.setVirtualStickModeEnabled(false, new CommonCallbacks.CompletionCallback() {
-                        @Override
-                        public void onResult(DJIError djiError) {
-                            if (djiError != null) {
-                                showToast(djiError.getDescription());
-                            } else {
-                                showToast("Disable Virtual Stick Success");
-                            }
-                        }
-                    });
-                }
-                break;
-
             case R.id.btn_take_off:
                 if (mFlightController != null) {
                     mFlightController.startTakeoff(
@@ -603,49 +523,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
     // classe per gestire gli input dati dagli stick salvati dentro le variabili globali:
     // mPitch, mRoll, mYaw and mThrottle. E inviarli al mFlightController
     class SendVirtualStickDataTask extends TimerTask {
-        Handler h = new Handler();
-        String msgp;
-        String msgy;
-        String msgr;
-        String msgt;
-        TextView msgViewp = (TextView) findViewById(R.id.pitch);
-        TextView msgViewy = (TextView) findViewById(R.id.yaw);
-        TextView msgViewr = (TextView) findViewById(R.id.roll);
-        TextView msgViewt = (TextView) findViewById(R.id.throttle);
 
         @Override
         public void run() {
 
-            msgp = Integer.toString((int) mPitch);
-            msgy = Integer.toString((int) mYaw);
-            msgr = Integer.toString((int) mRoll);
-            msgt = Integer.toString((int) mThrottle);
-
             if (mFlightController != null) {
-                h.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        msgViewp.setText(msgp);
-                    }
-                });
-                h.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        msgViewy.setText(msgy);
-                    }
-                });
-                h.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        msgViewr.setText(msgr);
-                    }
-                });
-                h.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        msgViewt.setText(msgt);
-                    }
-                });
                 // metodo che manda le variabili globali (Salvate nell'oggetto FlightControlData) al mFlightController
                 mFlightController.sendVirtualStickFlightControlData(
                         new FlightControlData( // oggetto descritto da queste tre variabili
@@ -661,15 +543,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-
+    //Socket Server
     class MyServerThread implements Runnable {
         Socket socket;
         ServerSocket server;
         InputStreamReader isr;
         BufferedReader buffer;
-        Handler h = new Handler();
         String msg;
-        TextView msgView = (TextView) findViewById(R.id.pitch);
+
+        float targetX;
+        float targetY;
+        double euclideanDistance;
 
         JSONObject jObj;
 
@@ -693,19 +577,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     // Apparently pitch and roll assignment are inverted in the tutorial version of the virtual stick control.
                     // It follows that we have to replicate this inversion by saving the pitch value inside mRoll and viceversa.
 
-                    mRoll = (float) jObj.getInt("pitch");
+                    /*mRoll = (float) jObj.getInt("pitch");
                     mPitch = (float) jObj.getInt("roll");
                     mYaw = (float) jObj.getInt("yaw");
-                    mThrottle = (float) jObj.getInt("throttle");
+                    mThrottle = (float) jObj.getInt("throttle");*/
 
-                    msg = Integer.toString((int) mPitch);
+                    targetX = (float) jObj.getDouble("target_x");
+                    targetY = (float) jObj.getDouble("target_y");
 
-                    h.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            msgView.setText(msg);
-                        }
-                    });
+                    euclideanDistance = distanceFromTargetPos(targetX, targetY);
+                    mPitch = normalVelocity(targetY, euclideanDistance);
+                    mRoll = normalVelocity(targetX, euclideanDistance);
+                    //mYaw = (float) (Math.atan2(targetY, targetX) - (Math.PI / 2));
+                    mThrottle = 0;
+
                 }
 
             } catch (IOException | JSONException e) {
@@ -713,5 +598,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         }
 
+        public double distanceFromTargetPos(float targX, float targY) {
+            return Math.sqrt(Math.pow(targX, 2) + Math.pow(targY, 2));
+        }
+
+        public float normalVelocity(float targetpos, double eucdist) {
+            return (float) (targetpos / eucdist);
+        }
     }
 }
