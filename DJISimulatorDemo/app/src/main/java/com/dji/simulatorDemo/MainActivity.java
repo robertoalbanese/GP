@@ -85,8 +85,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private FlightController mFlightController;
     protected TextView mConnectStatusTextView;
-    private Button mBtnEnableVirtualStick;
-    private Button mBtnDisableVirtualStick;
     private ToggleButton mBtnSimulator;
     private Button mBtnTakeOff;
     private Button mBtnLand;
@@ -379,8 +377,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mTextView = (TextView) findViewById(R.id.textview_simulator); // element to show the simulator state infos
         mTextViewIP = (TextView) findViewById(R.id.textview_ip_addr); //ip address of the server android
         mConnectStatusTextView = (TextView) findViewById(R.id.ConnectStatusTextView);
-        mSwtcEnableVirtualStick = (ToggleButton) findViewById(R.id.swtc_enable_virtual_stick);
+        mSwtcEnableVirtualStick = (ToggleButton) findViewById(R.id.swtc_enable_virtual_stick); //enable/disable Virtual Control Mode
 
+        //Show on screen in a TextView widget the ip address of the Android device
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
         String ipAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
         mTextViewIP.setText("Your Device IP Address: " + ipAddress);
@@ -517,8 +516,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         BufferedReader buffer;
         String msg;
 
+        // target position coordinates
         float targetX;
         float targetY;
+
         double euclideanDistance;
 
         JSONObject jObj;
@@ -532,29 +533,30 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                 while (true) {
 
+                    // wait for a new message from the client
                     socket = server.accept();
 
+                    // store the message and save the value in its field
                     isr = new InputStreamReader(socket.getInputStream());
                     buffer = new BufferedReader(isr);
                     msg = buffer.readLine();
                     jObj = new JSONObject(msg);
 
-                    // set new data received from socket:
-
-                    /*mRoll = (float) jObj.getInt("pitch");
-                    mPitch = (float) jObj.getInt("roll");
-                    mYaw = (float) jObj.getInt("yaw");
-                    mThrottle = (float) jObj.getInt("throttle");*/
-
+                    //We store the target position coordinates into two different variables
                     targetX = (float) jObj.getDouble("target_x");
                     targetY = (float) jObj.getDouble("target_y");
 
+                    // The euclidean distance between the body frame of the drone and the target point is computed
+                    // In this way is it possible to use it to compute the linear velocity along the Roll axis
+                    // Pitch velocity is setted to zero
+                    // We use atan2 to compute the angular velocity along the yaw axis inside computeAnguarVelocity to let the drone rotate
                     euclideanDistance = distanceFromTargetPos(targetX, targetY);
                     mPitch = 0;
                     mRoll = computeLinearVelocity(euclideanDistance);
                     mYaw = 15 * computeAnguarVelocity(targetX, targetY);
                     mThrottle = 0;
 
+                    //Each time a new targeg position is received the velocities are sent to the FlightController
                     if (mFlightController != null) {
                         // metodo che manda le variabili globali (Salvate nell'oggetto FlightControlData) al mFlightController
                         mFlightController.sendVirtualStickFlightControlData(
@@ -582,6 +584,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             return (float) (((Math.PI / 2) - Math.atan2(targetX, targetY)) / Math.PI);
         }
 
+        // The normal linear velocity is proportional to the distance and it is saturated to 1 if necessary.
         public float computeLinearVelocity(double dist) {
             return (float) satNormalVelocity(dist / 10);
         }
@@ -595,6 +598,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             return vel;
         }
 
+        // Euclidean distance between the body frame and the target position
         public double distanceFromTargetPos(float targX, float targY) {
             return Math.sqrt(Math.pow(targX, 2) + Math.pow(targY, 2));
         }
