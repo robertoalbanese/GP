@@ -7,11 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,8 +36,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.lang.Math;
 
@@ -93,9 +93,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ToggleButton mSwtcEnableVirtualStick;
 
     private TextView mTextView;
-
-    private Timer mSendVirtualStickDataTimer;
-    private SendVirtualStickDataTask mSendVirtualStickDataTask;
+    private TextView mTextViewIP;
 
     private float mPitch;
     private float mRoll;
@@ -312,13 +310,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onDestroy() {
         Log.e(TAG, "onDestroy");
         unregisterReceiver(mReceiver);
-        if (null != mSendVirtualStickDataTimer) {
-            mSendVirtualStickDataTask.cancel();
-            mSendVirtualStickDataTask = null;
-            mSendVirtualStickDataTimer.cancel();
-            mSendVirtualStickDataTimer.purge();
-            mSendVirtualStickDataTimer = null;
-        }
         super.onDestroy();
     }
 
@@ -386,15 +377,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mBtnLand = (Button) findViewById(R.id.btn_land); // land
         mBtnSimulator = (ToggleButton) findViewById(R.id.btn_start_simulator); // per fare tutto in simulazione
         mTextView = (TextView) findViewById(R.id.textview_simulator); // element to show the simulator state infos
+        mTextViewIP = (TextView) findViewById(R.id.textview_ip_addr); //ip address of the server android
         mConnectStatusTextView = (TextView) findViewById(R.id.ConnectStatusTextView);
         mSwtcEnableVirtualStick = (ToggleButton) findViewById(R.id.swtc_enable_virtual_stick);
 
-        // Crea oggetti mSendVirtualStickDataTimer e mSendVirtualStickDataTask per aggiornare i valori delle velocità nella struttura stateData
-        if (null == mSendVirtualStickDataTimer) {
-            mSendVirtualStickDataTask = new SendVirtualStickDataTask();
-            mSendVirtualStickDataTimer = new Timer();
-            mSendVirtualStickDataTimer.schedule(mSendVirtualStickDataTask, 0, 200);
-        }
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        String ipAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
+        mTextViewIP.setText("Your Device IP Address: " + ipAddress);
 
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
@@ -520,29 +509,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    // classe per gestire gli input dati dagli stick salvati dentro le variabili globali:
-    // mPitch, mRoll, mYaw and mThrottle. E inviarli al mFlightController
-    class SendVirtualStickDataTask extends TimerTask {
-
-        @Override
-        public void run() {
-
-            if (mFlightController != null) {
-                // metodo che manda le variabili globali (Salvate nell'oggetto FlightControlData) al mFlightController
-                mFlightController.sendVirtualStickFlightControlData(
-                        new FlightControlData( // oggetto descritto da queste tre variabili
-                                mPitch, mRoll, mYaw, mThrottle
-                        ), new CommonCallbacks.CompletionCallback() {
-                            @Override
-                            public void onResult(DJIError djiError) {
-
-                            }
-                        }
-                );
-            }
-        }
-    }
-
     //Socket Server
     class MyServerThread implements Runnable {
         Socket socket;
@@ -574,8 +540,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     jObj = new JSONObject(msg);
 
                     // set new data received from socket:
-                    // Apparently pitch and roll assignment are inverted in the tutorial version of the virtual stick control.
-                    // It follows that we have to replicate this inversion by saving the pitch value inside mRoll and viceversa.
 
                     /*mRoll = (float) jObj.getInt("pitch");
                     mPitch = (float) jObj.getInt("roll");
@@ -586,10 +550,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     targetY = (float) jObj.getDouble("target_y");
 
                     euclideanDistance = distanceFromTargetPos(targetX, targetY);
-                    mPitch = normalVelocity(targetY, euclideanDistance);
-                    mRoll = normalVelocity(targetX, euclideanDistance);
-                    //mYaw = (float) (Math.atan2(targetY, targetX) - (Math.PI / 2));
+                    mPitch = 0;
+                    mRoll = computeLinearVelocity(euclideanDistance);
+                    mYaw = 15 * computeAnguarVelocity(targetX, targetY);
                     mThrottle = 0;
+
+                    if (mFlightController != null) {
+                        // metodo che manda le variabili globali (Salvate nell'oggetto FlightControlData) al mFlightController
+                        mFlightController.sendVirtualStickFlightControlData(
+                                new FlightControlData( // oggetto descritto da queste tre variabili
+                                        mPitch, mRoll, mYaw, mThrottle
+                                ), new CommonCallbacks.CompletionCallback() {
+                                    @Override
+                                    public void onResult(DJIError djiError) {
+
+                                    }
+                                }
+                        );
+                    }
 
                 }
 
@@ -598,12 +576,27 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         }
 
-        public double distanceFromTargetPos(float targX, float targY) {
-            return Math.sqrt(Math.pow(targX, 2) + Math.pow(targY, 2));
+        //y is the horizontal side axis
+        //x is the frontal axis
+        public float computeAnguarVelocity(float x, float y) {
+            return (float) (((Math.PI / 2) - Math.atan2(targetX, targetY)) / Math.PI);
         }
 
-        public float normalVelocity(float targetpos, double eucdist) {
-            return (float) (targetpos / eucdist);
+        public float computeLinearVelocity(double dist) {
+            return (float) satNormalVelocity(dist / 10);
+        }
+
+        public double satNormalVelocity(double vel) {
+            if (vel > 1) {
+                return 1;
+            } else if (vel < -1) {
+                return -1;
+            }
+            return vel;
+        }
+
+        public double distanceFromTargetPos(float targX, float targY) {
+            return Math.sqrt(Math.pow(targX, 2) + Math.pow(targY, 2));
         }
     }
 }
