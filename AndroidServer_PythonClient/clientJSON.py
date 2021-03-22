@@ -1,9 +1,11 @@
 import socket
 import json
 import time
+import numpy as np 
+
 
 PORT = 8080
-SERVER = "130.251.13.144"  # IP del server
+SERVER = "130.251.6.97"  # IP del server
 ADDR = (SERVER, PORT)
 FORMAT = "utf-8"
 DISCONNECT_MESSAGE = "!DISCONNECT"
@@ -16,29 +18,35 @@ def send_msg(msg, client):
     # print(client.recv(2048).decode(FORMAT))# decodifico risposta e la printo
     client.close()
 
+    
+
 
 def main():
 
     with open('rpy.JSON') as j:
         data = json.load(j)
 
-    #i = 1
-    print("Write yaw")
-    yaw = input()
-    data['pitch'] = 0
-    msg = json.dumps(data)
-    while (True):
-        #print("Write yaw")
-        #yaw = input()
-        data['pitch'] = yaw
+    wordset = np.genfromtxt(fname='navigation_target.txt')
+    
+    print("ciao")
+  
+    
+    for i in range(45):
+        x = wordset[i][0]
+        y = wordset[i][2]
+        data['target_x'] = x
+        data['target_y'] = y
+        
         msg = json.dumps(data)
-        client = socket.socket(
-            socket.AF_INET, socket.SOCK_STREAM)  # creo il client
+        print("boh")
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # creo il client
         client.connect(ADDR)  # indirizzo del server a cui devo connettermi
+        
         print("Sanding the jason msg...")
         send_msg(msg, client)
-        #i = i + 1
-        time.sleep(1)
+        #time.sleep(1)
+        
+        
 
 
 if __name__ == "__main__":
