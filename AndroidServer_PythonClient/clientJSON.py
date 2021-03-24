@@ -5,7 +5,7 @@ import numpy as np
 
 
 PORT = 8080
-SERVER = "130.251.6.97"  # IP del server
+SERVER = "192.168.1.62"  # IP del server
 ADDR = (SERVER, PORT)
 FORMAT = "utf-8"
 DISCONNECT_MESSAGE = "!DISCONNECT"
@@ -26,25 +26,23 @@ def main():
     with open('rpy.JSON') as j:
         data = json.load(j)
 
-    wordset = np.genfromtxt(fname='navigation_target.txt')
+    wordset = np.genfromtxt(fname='navigation_target.txt')  
     
-    print("ciao")
-  
-    
-    for i in range(45):
-        x = wordset[i][0]
-        y = wordset[i][2]
-        data['target_x'] = x
-        data['target_y'] = y
+    #for i in range(400):
+    #    x = wordset[i][0]
+    #    y = wordset[i][2]
+    while True:
+        data['target_x'] = 1
+        data['target_y'] = 0
         
         msg = json.dumps(data)
-        print("boh")
+
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # creo il client
         client.connect(ADDR)  # indirizzo del server a cui devo connettermi
         
         print("Sanding the jason msg...")
         send_msg(msg, client)
-        #time.sleep(1)
+        time.sleep(0.3)
         
         
 
