@@ -1,6 +1,4 @@
 {
-    "roll" : 0,
-    "pitch" : 0,
-    "yaw" : 0,
-    "throttle" : 0
+    "traget_x" : 0,
+    "target_y" : 0
 }
